@@ -1,21 +1,21 @@
-<script setup>
-import { ref, onMounted } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted, nextTick } from 'vue'
 
 import gatorsLogo from '@/assets/florida_gators.jpg'
 import srm from '@/assets/srm.jpg'
 
 // Separate refs for better control over animation timing
-const eduExpanded = ref([])
-const workExpanded = ref({})
+const eduExpanded = ref<boolean[]>([])
+const workExpanded = ref<Record<number, boolean>>({})
 const isLoaded = ref(false)
 
 import { reactive, onBeforeUnmount } from 'vue'
 
-const containerRef = ref(null)
-const hubRef = ref(null)
-const nodeRefs = ref([])
+const containerRef = ref<HTMLElement | null>(null)
+const hubRef = ref<HTMLElement | null>(null)
+const nodeRefs = ref<(HTMLElement | null)[]>([])
 const hubCoords = reactive({ x: 0, y: 0 })
-const nodeCoords = reactive([])
+const nodeCoords = reactive<Array<{ x: number; y: number }>>([])
 
 const socialLinks = [
   { name: 'LinkedIn', url: '#' },
@@ -56,6 +56,10 @@ const nodes = [
   },
 ]
 
+const isHTMLElement = (el: unknown): el is HTMLElement => {
+  return el instanceof HTMLElement
+}
+
 const updateCoords = () => {
   if (!containerRef.value || !hubRef.value) return
   const rootRect = containerRef.value.getBoundingClientRect()
@@ -67,7 +71,7 @@ const updateCoords = () => {
 
   // Update Node Centers
   nodeRefs.value.forEach((el, i) => {
-    if (el) {
+    if (el && isHTMLElement(el)) {
       const nRect = el.getBoundingClientRect()
       nodeCoords[i] = {
         x: nRect.left + nRect.width / 2 - rootRect.left,
@@ -77,11 +81,13 @@ const updateCoords = () => {
   })
 }
 
-let observer
+let observer: ResizeObserver | null = null
 onMounted(() => {
   updateCoords()
   observer = new ResizeObserver(updateCoords)
-  observer.observe(containerRef.value)
+  if (containerRef.value) {
+    observer.observe(containerRef.value)
+  }
   window.addEventListener('scroll', updateCoords)
 })
 
@@ -333,6 +339,7 @@ let isDeleting = false
 
 const typeEffect = () => {
   const fullText = roles[roleIndex]
+  if (!fullText) return
   isDeleting ? charIndex-- : charIndex++
   currentRole.value = fullText.substring(0, charIndex)
 
@@ -364,7 +371,7 @@ const initScrollObserver = () => {
   document.querySelectorAll('.reveal-on-scroll').forEach((el) => observer.observe(el))
 }
 
-const toggleWork = (index) => {
+const toggleWork = (index: number) => {
   workExpanded.value[index] = !workExpanded.value[index]
 }
 
@@ -556,7 +563,7 @@ onMounted(async () => {
                 </h1>
 
                 <div class="flex items-center gap-6 h-12">
-                  <div class="h-[1px] w-16 bg-neutral-800"></div>
+                  <div class="h-px w-16 bg-neutral-800"></div>
                   <span
                     class="text-xl lg:text-2xl font-mono text-neutral-400 uppercase tracking-[0.3em]"
                   >
@@ -1112,65 +1119,6 @@ onMounted(async () => {
     </div>
   </section>
 
-  <!-- <div class="min-h-screen bg-black text-white p-10 lg:p-24 border-t border-neutral-900">
-    <div class="mb-20">
-      <h2 class="text-amber-500 font-mono tracking-[0.3em] uppercase text-sm mb-2">Recognition</h2>
-      <h1 class="text-6xl font-black italic uppercase">Achievements</h1>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
-      <div class="lg:col-span-7">
-        <h3 class="text-2xl font-bold mb-10 flex items-center gap-4">
-          <span class="text-amber-500">01.</span> Hackathon Wins
-        </h3>
-
-        <div class="space-y-6">
-          <div
-            v-for="(hack, i) in hackathons"
-            :key="i"
-            class="group relative border-2 border-neutral-800 bg-neutral-900/30 p-8 rounded-2xl hover:border-amber-500/50 transition-all duration-500"
-          >
-            <div class="flex justify-between items-start mb-4">
-              <div>
-                <h4 class="text-xl font-bold group-hover:text-amber-400 transition-colors">
-                  {{ hack.title }}
-                </h4>
-                <p class="text-amber-500 font-mono text-[10px] mt-1 uppercase tracking-widest">
-                  {{ hack.issuer }}
-                </p>
-                <p class="text-amber-200/60 font-medium text-xs mt-1">{{ hack.award }}</p>
-              </div>
-              <span class="text-neutral-600 font-mono text-sm">{{ hack.date }}</span>
-            </div>
-            <p class="text-gray-400 text-sm leading-relaxed" v-html="hack.description"></p>
-          </div>
-        </div>
-      </div>
-
-      <div class="lg:col-span-5 border-l border-neutral-800 lg:pl-16">
-        <h3 class="text-2xl font-bold mb-10 flex items-center gap-4">
-          <span class="text-amber-500">02.</span> Publications
-        </h3>
-
-        <div class="space-y-12">
-          <div v-for="(pub, j) in publications" :key="j" class="relative">
-            <div
-              class="absolute -left-[69px] top-2 w-4 h-4 bg-amber-500 rounded-full border-4 border-black"
-            ></div>
-            <p class="text-xs font-mono text-neutral-500 mb-2 uppercase">{{ pub.journal }}</p>
-            <h4 class="text-lg font-bold leading-snug mb-3">{{ pub.title }}</h4>
-            <p class="text-sm text-gray-400 mb-4">{{ pub.abstract }}</p>
-            <a
-              :href="pub.link"
-              class="text-amber-500 text-xs font-bold uppercase tracking-widest hover:underline"
-              >View Paper →</a
-            >
-          </div>
-        </div>
-      </div>
-    </div>
-  </div> -->
-
   <section
     id="achievements"
     class="min-h-screen bg-black py-20 lg:py-32 border-b border-neutral-900"
@@ -1343,7 +1291,13 @@ onMounted(async () => {
           <div
             v-for="(node, index) in nodes"
             :key="index"
-            :ref="(el) => (nodeRefs[index] = el)"
+            :ref="
+              (el) => {
+                if (isHTMLElement(el)) {
+                  nodeRefs[index] = el
+                }
+              }
+            "
             :class="[
               'w-full max-w-sm lg:absolute lg:w-72 bg-neutral-900/40 backdrop-blur-xl border border-neutral-800 p-6 rounded-2xl hover:border-amber-500/60 transition-all duration-500 z-20 group',
               node.pos,

@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 const navItems = ['Home', 'About', 'Education', 'Experience', 'Projects', 'Skills']
 </script>
 
