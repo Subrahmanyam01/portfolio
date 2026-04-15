@@ -4,7 +4,14 @@ import { ref, computed } from 'vue'
 const activeCategory = ref('All')
 const hoveredProject = ref<string | null>(null)
 
-const categories = ['All', 'Distributed Systems', 'Full Stack', 'AI & NLP', 'Microservices', 'Observability']
+const categories = [
+  'All',
+  'Distributed Systems',
+  'Full Stack',
+  'AI & NLP',
+  'Microservices',
+  'Observability',
+]
 
 interface Project {
   title: string
@@ -37,14 +44,30 @@ const projects: Project[] = [
     accentColor: '#fbbf24',
   },
   {
-    title: 'StreamFlow',
-    tag: 'Distributed Systems',
-    tech: ['Kafka', 'Flink', 'Python', 'PostgreSQL'],
+    title: 'InsightEngine',
+    tag: 'AI & NLP',
+    tech: ['Angular', 'FastAPI', 'Pinecone', 'LangChain', 'AWS'],
     description:
-      'Real-time anomaly detection platform processing <strong>50K+ events/sec</strong> with sub-second latency. Implemented Flink windowing and idempotent Python microservices for exactly-once semantics.',
+      'Information retrieval system with <strong>hybrid search</strong> (Keyword + Vector) over 50K+ documents. Integrated re-ranking pipelines achieving sub-500ms p99 latency.',
     metrics: [
-      { label: 'Events/sec', value: '50K+' },
-      { label: 'Latency', value: '< 1s' },
+      { label: 'Recall ↑', value: '25%' },
+      { label: 'p99 Latency', value: '420ms' },
+      { label: 'Docs', value: '50K+' },
+    ],
+    visual: 'ai',
+    github: '#',
+    accentColor: '#fbbf24',
+  },
+  {
+    title: 'Quantify',
+    tag: 'AI & NLP',
+    tech: ['Django', 'React', 'Redis', 'Whisper', 'HuggingFace'],
+    description:
+      'AI translation & transcription platform. Built a pipeline with <strong>Whisper (STT)</strong> and Helsinki-NLP models. Model quantization reduced GPU memory usage by 30%.',
+    metrics: [
+      { label: 'Memory ↓', value: '30%' },
+      { label: 'Latency', value: '800ms' },
+      { label: 'Langs', value: '200+' },
     ],
     visual: 'data',
     github: '#',
@@ -55,29 +78,14 @@ const projects: Project[] = [
     tag: 'Full Stack',
     tech: ['React', 'Django', 'AWS Serverless', 'PostgreSQL'],
     description:
-      'Enterprise billing platform automating the payment lifecycle for <strong>12,000+ annual invoices</strong>. Architected a serverless solution using Lambda/SQS reducing collection time from 45 to 14 days.',
+      'Enterprise billing platform automating 12K+ annual invoices. Features an <strong>AES-256 encrypted vault</strong> and automated reconciliation via Stripe.',
     metrics: [
-      { label: 'Invoices/yr', value: '12K+' },
       { label: 'Collection ↓', value: '69%' },
+      { label: 'Time', value: '45d → 14d' },
     ],
     visual: 'app',
     github: '#',
-    live: '#',
     accentColor: '#d97706',
-  },
-  {
-    title: 'Quantify',
-    tag: 'AI & NLP',
-    tech: ['Django', 'React', 'Transformers', 'Whisper', 'spaCy'],
-    description:
-      'AI translation platform utilizing <strong>Helsinki-NLP models</strong>. Engineered a pipeline integrating <strong>Whisper (STT)</strong> and <strong>spaCy</strong> for document classification and named entity recognition.',
-    metrics: [
-      { label: 'Model', value: 'Helsinki-NLP' },
-      { label: 'Pipeline', value: 'STT + NER' },
-    ],
-    visual: 'ai',
-    github: '#',
-    accentColor: '#fbbf24',
   },
   {
     title: 'CollabSpace',
@@ -91,35 +99,21 @@ const projects: Project[] = [
     ],
     visual: 'code',
     github: '#',
-    accentColor: '#f59e0b',
+    accentColor: '#fbbf24',
   },
   {
     title: 'ShopFlow',
     tag: 'Microservices',
     tech: ['Node.js', 'K8s', 'RabbitMQ', 'PostgreSQL'],
     description:
-      'E-commerce platform with 8 microservices and <strong>Saga pattern</strong> for distributed transactions. Processed 50K+ monthly transactions with Stripe integration and 99.95% uptime on Kubernetes.',
+      'E-commerce platform with 8 microservices and <strong>Saga pattern</strong> for distributed transactions. Processed 50K+ monthly transactions with Stripe integration.',
     metrics: [
       { label: 'Uptime', value: '99.95%' },
       { label: 'Tx/month', value: '50K+' },
     ],
     visual: 'network',
     github: '#',
-    accentColor: '#d97706',
-  },
-  {
-    title: 'OpsDash',
-    tag: 'Observability',
-    tech: ['FastAPI', 'Prometheus', 'Grafana', 'React', 'TimescaleDB'],
-    description:
-      'Observability platform aggregating <strong>5M+ daily metrics</strong> from 100+ exporters. Built with FastAPI and TimescaleDB for sub-second metric querying and anomaly detection.',
-    metrics: [
-      { label: 'Daily metrics', value: '5M+' },
-      { label: 'Exporters', value: '100+' },
-    ],
-    visual: 'data',
-    github: '#',
-    accentColor: '#fbbf24',
+    accentColor: '#f59e0b',
   },
 ]
 
@@ -189,11 +183,16 @@ const getTechColor = (tech: string) =>
           Portfolio
         </h2>
         <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-          <h1 class="text-5xl md:text-7xl xl:text-8xl font-black tracking-tighter italic text-white leading-none">
+          <h1
+            class="text-5xl md:text-7xl xl:text-8xl font-black tracking-tighter italic text-white leading-none"
+          >
             FEATURED <br /><span class="text-neutral-700">PROJECTS</span>
           </h1>
-          <p class="text-gray-400 text-base lg:text-lg leading-relaxed font-light max-w-md lg:text-right">
-            A curated collection of systems I've designed and shipped — spanning distributed infrastructure, AI pipelines, and real-time platforms.
+          <p
+            class="text-gray-400 text-base lg:text-lg leading-relaxed font-light max-w-md lg:text-right"
+          >
+            A curated collection of systems I've designed and shipped — spanning distributed
+            infrastructure, AI pipelines, and real-time platforms.
           </p>
         </div>
         <div class="w-24 h-0.5 bg-gradient-to-r from-amber-500 to-transparent mt-10"></div>
@@ -219,40 +218,105 @@ const getTechColor = (tech: string) =>
             <!-- Network Visualization -->
             <div class="relative w-full h-full flex items-center justify-center">
               <!-- Outer rings -->
-              <div class="absolute w-56 h-56 border border-amber-500/10 rounded-full animate-spin-ultra-slow"></div>
-              <div class="absolute w-40 h-40 border border-amber-500/15 rounded-full animate-spin-ultra-slow-reverse"></div>
-              <div class="absolute w-24 h-24 border border-amber-500/25 rounded-full animate-pulse-slow"></div>
+              <div
+                class="absolute w-56 h-56 border border-amber-500/10 rounded-full animate-spin-ultra-slow"
+              ></div>
+              <div
+                class="absolute w-40 h-40 border border-amber-500/15 rounded-full animate-spin-ultra-slow-reverse"
+              ></div>
+              <div
+                class="absolute w-24 h-24 border border-amber-500/25 rounded-full animate-pulse-slow"
+              ></div>
 
               <!-- Center hub -->
               <div
                 class="relative w-16 h-16 bg-amber-500/10 border border-amber-500/50 rounded-full flex items-center justify-center backdrop-blur-sm shadow-[0_0_30px_rgba(251,191,36,0.2)] group-hover:shadow-[0_0_50px_rgba(251,191,36,0.3)] transition-shadow duration-700"
               >
-                <span class="text-[9px] font-mono text-amber-500 font-bold tracking-widest">KV</span>
+                <span class="text-[9px] font-mono text-amber-500 font-bold tracking-widest"
+                  >KV</span
+                >
               </div>
 
               <!-- Orbiting nodes -->
               <div class="node-orbit absolute" style="--orbit-d: 90px; --orbit-delay: 0s">
-                <div class="w-3 h-3 bg-amber-500/30 border border-amber-500/60 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.4)]"></div>
+                <div
+                  class="w-3 h-3 bg-amber-500/30 border border-amber-500/60 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.4)]"
+                ></div>
               </div>
               <div class="node-orbit absolute" style="--orbit-d: 90px; --orbit-delay: -3.3s">
                 <div class="w-2 h-2 bg-amber-500/20 border border-amber-500/40 rounded-full"></div>
               </div>
               <div class="node-orbit absolute" style="--orbit-d: 90px; --orbit-delay: -6.6s">
-                <div class="w-2.5 h-2.5 bg-amber-500/25 border border-amber-500/50 rounded-full"></div>
+                <div
+                  class="w-2.5 h-2.5 bg-amber-500/25 border border-amber-500/50 rounded-full"
+                ></div>
               </div>
 
               <!-- Data packets / lines -->
-              <svg class="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
-                <line x1="50%" y1="50%" x2="20%" y2="20%" stroke="#fbbf24" stroke-width="0.5" stroke-dasharray="3 8" opacity="0.2" />
-                <line x1="50%" y1="50%" x2="80%" y2="25%" stroke="#fbbf24" stroke-width="0.5" stroke-dasharray="3 8" opacity="0.2" />
-                <line x1="50%" y1="50%" x2="80%" y2="75%" stroke="#fbbf24" stroke-width="0.5" stroke-dasharray="3 8" opacity="0.2" />
-                <line x1="50%" y1="50%" x2="20%" y2="75%" stroke="#fbbf24" stroke-width="0.5" stroke-dasharray="3 8" opacity="0.2" />
-                <line x1="50%" y1="50%" x2="50%" y2="10%" stroke="#fbbf24" stroke-width="0.5" stroke-dasharray="3 8" opacity="0.2" />
+              <svg
+                class="absolute inset-0 w-full h-full pointer-events-none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <line
+                  x1="50%"
+                  y1="50%"
+                  x2="20%"
+                  y2="20%"
+                  stroke="#fbbf24"
+                  stroke-width="0.5"
+                  stroke-dasharray="3 8"
+                  opacity="0.2"
+                />
+                <line
+                  x1="50%"
+                  y1="50%"
+                  x2="80%"
+                  y2="25%"
+                  stroke="#fbbf24"
+                  stroke-width="0.5"
+                  stroke-dasharray="3 8"
+                  opacity="0.2"
+                />
+                <line
+                  x1="50%"
+                  y1="50%"
+                  x2="80%"
+                  y2="75%"
+                  stroke="#fbbf24"
+                  stroke-width="0.5"
+                  stroke-dasharray="3 8"
+                  opacity="0.2"
+                />
+                <line
+                  x1="50%"
+                  y1="50%"
+                  x2="20%"
+                  y2="75%"
+                  stroke="#fbbf24"
+                  stroke-width="0.5"
+                  stroke-dasharray="3 8"
+                  opacity="0.2"
+                />
+                <line
+                  x1="50%"
+                  y1="50%"
+                  x2="50%"
+                  y2="10%"
+                  stroke="#fbbf24"
+                  stroke-width="0.5"
+                  stroke-dasharray="3 8"
+                  opacity="0.2"
+                />
               </svg>
 
               <!-- FEATURED badge -->
-              <div class="absolute top-4 left-4 px-3 py-1 bg-amber-500/10 border border-amber-500/30 rounded-full">
-                <span class="text-[9px] font-mono font-bold text-amber-500 tracking-[0.3em] uppercase">★ Featured</span>
+              <div
+                class="absolute top-4 left-4 px-3 py-1 bg-amber-500/10 border border-amber-500/30 rounded-full"
+              >
+                <span
+                  class="text-[9px] font-mono font-bold text-amber-500 tracking-[0.3em] uppercase"
+                  >★ Featured</span
+                >
               </div>
             </div>
           </div>
@@ -262,16 +326,23 @@ const getTechColor = (tech: string) =>
             <div>
               <!-- Tag + Title -->
               <div class="flex items-center gap-3 mb-5">
-                <span class="text-[9px] font-mono font-bold text-amber-500/70 uppercase tracking-[0.3em] px-3 py-1 border border-amber-500/20 rounded-full bg-amber-500/5">
+                <span
+                  class="text-[9px] font-mono font-bold text-amber-500/70 uppercase tracking-[0.3em] px-3 py-1 border border-amber-500/20 rounded-full bg-amber-500/5"
+                >
                   {{ featuredProject.tag }}
                 </span>
               </div>
 
-              <h3 class="text-4xl lg:text-5xl font-black italic tracking-tighter text-white mb-4 group-hover:text-amber-300 transition-colors duration-500">
+              <h3
+                class="text-4xl lg:text-5xl font-black italic tracking-tighter text-white mb-4 group-hover:text-amber-300 transition-colors duration-500"
+              >
                 {{ featuredProject.title }}
               </h3>
 
-              <p class="text-gray-400 text-base leading-relaxed font-light mb-8 max-w-lg" v-html="featuredProject.description"></p>
+              <p
+                class="text-gray-400 text-base leading-relaxed font-light mb-8 max-w-lg"
+                v-html="featuredProject.description"
+              ></p>
 
               <!-- Metrics row -->
               <div class="grid grid-cols-3 gap-4 mb-8">
@@ -281,12 +352,16 @@ const getTechColor = (tech: string) =>
                   class="bg-neutral-900/60 border border-neutral-800 rounded-xl p-4 text-center group-hover:border-amber-500/20 transition-colors duration-500"
                 >
                   <p class="text-xl font-black text-amber-400 mb-1">{{ metric.value }}</p>
-                  <p class="text-[9px] font-mono text-neutral-500 uppercase tracking-widest">{{ metric.label }}</p>
+                  <p class="text-[9px] font-mono text-neutral-500 uppercase tracking-widest">
+                    {{ metric.label }}
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pt-6 border-t border-neutral-800/50">
+            <div
+              class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pt-6 border-t border-neutral-800/50"
+            >
               <!-- Tech Stack -->
               <div class="flex flex-wrap gap-2">
                 <span
@@ -307,7 +382,9 @@ const getTechColor = (tech: string) =>
                   class="flex items-center gap-2 px-5 py-2.5 bg-amber-500 text-black text-xs font-black uppercase tracking-widest rounded-xl hover:bg-amber-400 transition-colors duration-300 group/btn"
                 >
                   <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                    <path
+                      d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
+                    />
                   </svg>
                   GitHub
                 </a>
@@ -352,35 +429,79 @@ const getTechColor = (tech: string) =>
             class="h-40 border-b border-neutral-800/60 flex items-center justify-center p-6 relative overflow-hidden bg-black/40 group-hover:bg-amber-500/3 transition-colors duration-500"
           >
             <!-- network visual -->
-            <div v-if="project.visual === 'network'" class="relative w-full h-full flex items-center justify-center">
-              <div class="absolute w-28 h-28 border border-amber-500/10 rounded-full animate-spin-ultra-slow"></div>
-              <div class="absolute w-16 h-16 border border-amber-500/20 rounded-full animate-spin-ultra-slow-reverse"></div>
-              <div class="w-8 h-8 bg-amber-500/10 border border-amber-500/40 rounded-full flex items-center justify-center">
+            <div
+              v-if="project.visual === 'network'"
+              class="relative w-full h-full flex items-center justify-center"
+            >
+              <div
+                class="absolute w-28 h-28 border border-amber-500/10 rounded-full animate-spin-ultra-slow"
+              ></div>
+              <div
+                class="absolute w-16 h-16 border border-amber-500/20 rounded-full animate-spin-ultra-slow-reverse"
+              ></div>
+              <div
+                class="w-8 h-8 bg-amber-500/10 border border-amber-500/40 rounded-full flex items-center justify-center"
+              >
                 <div class="w-2 h-2 bg-amber-500/60 rounded-full animate-pulse"></div>
               </div>
             </div>
 
             <!-- data visual -->
-            <div v-else-if="project.visual === 'data'" class="w-full max-w-[180px] h-20 flex items-end justify-center gap-1.5">
-              <div class="w-1/6 bg-amber-500/15 rounded-t animate-bar" style="height: 30%; animation-delay: 0s"></div>
-              <div class="w-1/6 bg-amber-500/30 rounded-t animate-bar" style="height: 55%; animation-delay: 0.15s"></div>
-              <div class="w-1/6 bg-amber-500/50 rounded-t animate-bar" style="height: 80%; animation-delay: 0.3s"></div>
-              <div class="w-1/6 bg-amber-500/35 rounded-t animate-bar" style="height: 45%; animation-delay: 0.1s"></div>
-              <div class="w-1/6 bg-amber-500/70 rounded-t animate-bar" style="height: 100%; animation-delay: 0.45s"></div>
-              <div class="w-1/6 bg-amber-500/25 rounded-t animate-bar" style="height: 35%; animation-delay: 0.25s"></div>
+            <div
+              v-else-if="project.visual === 'data'"
+              class="w-full max-w-[180px] h-20 flex items-end justify-center gap-1.5"
+            >
+              <div
+                class="w-1/6 bg-amber-500/15 rounded-t animate-bar"
+                style="height: 30%; animation-delay: 0s"
+              ></div>
+              <div
+                class="w-1/6 bg-amber-500/30 rounded-t animate-bar"
+                style="height: 55%; animation-delay: 0.15s"
+              ></div>
+              <div
+                class="w-1/6 bg-amber-500/50 rounded-t animate-bar"
+                style="height: 80%; animation-delay: 0.3s"
+              ></div>
+              <div
+                class="w-1/6 bg-amber-500/35 rounded-t animate-bar"
+                style="height: 45%; animation-delay: 0.1s"
+              ></div>
+              <div
+                class="w-1/6 bg-amber-500/70 rounded-t animate-bar"
+                style="height: 100%; animation-delay: 0.45s"
+              ></div>
+              <div
+                class="w-1/6 bg-amber-500/25 rounded-t animate-bar"
+                style="height: 35%; animation-delay: 0.25s"
+              ></div>
             </div>
 
             <!-- ai visual -->
-            <div v-else-if="project.visual === 'ai'" class="relative w-24 h-24 flex items-center justify-center">
-              <div class="absolute inset-0 border border-amber-500/10 rounded-full animate-ping" style="animation-duration: 2s"></div>
-              <div class="absolute inset-3 border border-amber-500/20 rounded-full animate-ping" style="animation-duration: 2.5s; animation-delay: 0.5s"></div>
-              <div class="w-14 h-14 border border-amber-500/40 rounded-full flex items-center justify-center bg-amber-500/5">
+            <div
+              v-else-if="project.visual === 'ai'"
+              class="relative w-24 h-24 flex items-center justify-center"
+            >
+              <div
+                class="absolute inset-0 border border-amber-500/10 rounded-full animate-ping"
+                style="animation-duration: 2s"
+              ></div>
+              <div
+                class="absolute inset-3 border border-amber-500/20 rounded-full animate-ping"
+                style="animation-duration: 2.5s; animation-delay: 0.5s"
+              ></div>
+              <div
+                class="w-14 h-14 border border-amber-500/40 rounded-full flex items-center justify-center bg-amber-500/5"
+              >
                 <span class="text-[10px] font-mono text-amber-500 font-bold">AI</span>
               </div>
             </div>
 
             <!-- app visual -->
-            <div v-else-if="project.visual === 'app'" class="w-full max-w-[180px] bg-neutral-900 border border-neutral-700/50 rounded-lg p-3 font-mono text-[8px] text-neutral-500">
+            <div
+              v-else-if="project.visual === 'app'"
+              class="w-full max-w-[180px] bg-neutral-900 border border-neutral-700/50 rounded-lg p-3 font-mono text-[8px] text-neutral-500"
+            >
               <div class="flex gap-1 mb-2">
                 <div class="w-2 h-2 rounded-full bg-red-500/40"></div>
                 <div class="w-2 h-2 rounded-full bg-yellow-500/40"></div>
@@ -392,37 +513,54 @@ const getTechColor = (tech: string) =>
             </div>
 
             <!-- code visual -->
-            <div v-else-if="project.visual === 'code'" class="w-full max-w-[180px] bg-neutral-900 border border-neutral-700/50 rounded-lg p-3 font-mono text-[8px] text-gray-500">
+            <div
+              v-else-if="project.visual === 'code'"
+              class="w-full max-w-[180px] bg-neutral-900 border border-neutral-700/50 rounded-lg p-3 font-mono text-[8px] text-gray-500"
+            >
               <div class="flex gap-1 mb-2">
                 <div class="w-2 h-2 rounded-full bg-red-500/40"></div>
                 <div class="w-2 h-2 rounded-full bg-yellow-500/40"></div>
                 <div class="w-2 h-2 rounded-full bg-green-500/40"></div>
               </div>
-              <p><span class="text-amber-500">const</span> ws = <span class="text-cyan-400">WebSocket</span>()</p>
-              <p class="pl-2 text-green-400/70">ws.<span class="text-purple-400">emit</span>('sync')</p>
+              <p>
+                <span class="text-amber-500">const</span> ws =
+                <span class="text-cyan-400">WebSocket</span>()
+              </p>
+              <p class="pl-2 text-green-400/70">
+                ws.<span class="text-purple-400">emit</span>('sync')
+              </p>
               <p class="text-neutral-600">// 10K users</p>
             </div>
 
             <!-- hover glow -->
-            <div class="absolute inset-0 bg-gradient-radial from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+            <div
+              class="absolute inset-0 bg-gradient-radial from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+            ></div>
           </div>
 
           <!-- Card Body -->
           <div class="p-6 flex flex-col flex-grow">
             <!-- Tag -->
             <div class="mb-4">
-              <span class="text-[9px] font-mono font-bold text-amber-500/60 uppercase tracking-[0.3em] px-2.5 py-1 border border-amber-500/15 rounded-full bg-amber-500/5">
+              <span
+                class="text-[9px] font-mono font-bold text-amber-500/60 uppercase tracking-[0.3em] px-2.5 py-1 border border-amber-500/15 rounded-full bg-amber-500/5"
+              >
                 {{ project.tag }}
               </span>
             </div>
 
             <!-- Title -->
-            <h3 class="text-xl font-black tracking-tight text-white mb-3 group-hover:text-amber-300 transition-colors duration-400 italic">
+            <h3
+              class="text-xl font-black tracking-tight text-white mb-3 group-hover:text-amber-300 transition-colors duration-400 italic"
+            >
               {{ project.title }}
             </h3>
 
             <!-- Description -->
-            <p class="text-sm text-gray-400 leading-relaxed font-light mb-5 flex-grow" v-html="project.description"></p>
+            <p
+              class="text-sm text-gray-400 leading-relaxed font-light mb-5 flex-grow"
+              v-html="project.description"
+            ></p>
 
             <!-- Metrics -->
             <div class="flex gap-3 mb-5">
@@ -431,8 +569,12 @@ const getTechColor = (tech: string) =>
                 :key="metric.label"
                 class="flex-1 bg-neutral-900/80 border border-neutral-800/80 rounded-lg p-2.5 text-center group-hover:border-amber-500/15 transition-colors duration-500"
               >
-                <p class="text-sm font-black text-amber-400/90 leading-none mb-1">{{ metric.value }}</p>
-                <p class="text-[8px] font-mono text-neutral-600 uppercase tracking-wider">{{ metric.label }}</p>
+                <p class="text-sm font-black text-amber-400/90 leading-none mb-1">
+                  {{ metric.value }}
+                </p>
+                <p class="text-[8px] font-mono text-neutral-600 uppercase tracking-wider">
+                  {{ metric.label }}
+                </p>
               </div>
             </div>
 
@@ -448,7 +590,10 @@ const getTechColor = (tech: string) =>
                 >
                   {{ tech }}
                 </span>
-                <span v-if="project.tech.length > 4" class="text-[9px] font-mono text-neutral-600 px-2 py-0.5">
+                <span
+                  v-if="project.tech.length > 4"
+                  class="text-[9px] font-mono text-neutral-600 px-2 py-0.5"
+                >
                   +{{ project.tech.length - 4 }}
                 </span>
               </div>
@@ -461,7 +606,9 @@ const getTechColor = (tech: string) =>
                 title="View on GitHub"
               >
                 <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                  <path
+                    d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
+                  />
                 </svg>
               </a>
             </div>
@@ -497,8 +644,12 @@ const getTechColor = (tech: string) =>
 
 /* Orbiting nodes */
 @keyframes orbit {
-  from { transform: rotate(0deg) translateX(var(--orbit-d, 80px)) rotate(0deg); }
-  to   { transform: rotate(360deg) translateX(var(--orbit-d, 80px)) rotate(-360deg); }
+  from {
+    transform: rotate(0deg) translateX(var(--orbit-d, 80px)) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(var(--orbit-d, 80px)) rotate(-360deg);
+  }
 }
 .node-orbit {
   animation: orbit 10s linear infinite;
@@ -507,15 +658,23 @@ const getTechColor = (tech: string) =>
 
 /* Ultra slow spin */
 @keyframes spin-ultra-slow {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 .animate-spin-ultra-slow {
   animation: spin-ultra-slow 30s linear infinite;
 }
 @keyframes spin-ultra-slow-reverse {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(-360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
 }
 .animate-spin-ultra-slow-reverse {
   animation: spin-ultra-slow-reverse 20s linear infinite;
@@ -523,8 +682,13 @@ const getTechColor = (tech: string) =>
 
 /* Pulse slow */
 @keyframes pulse-slow {
-  0%, 100% { opacity: 0.3; }
-  50%       { opacity: 0.8; }
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.8;
+  }
 }
 .animate-pulse-slow {
   animation: pulse-slow 3s ease-in-out infinite;
@@ -532,8 +696,15 @@ const getTechColor = (tech: string) =>
 
 /* Bar chart animation */
 @keyframes bar-grow {
-  0%, 100% { opacity: 0.5; transform: scaleY(1); }
-  50%       { opacity: 1;   transform: scaleY(1.08); }
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scaleY(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleY(1.08);
+  }
 }
 .animate-bar {
   animation: bar-grow 2s ease-in-out infinite;
@@ -542,6 +713,11 @@ const getTechColor = (tech: string) =>
 
 /* Radial gradient utility */
 .bg-gradient-radial {
-  background: radial-gradient(circle, var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to));
+  background: radial-gradient(
+    circle,
+    var(--tw-gradient-from),
+    var(--tw-gradient-via),
+    var(--tw-gradient-to)
+  );
 }
 </style>

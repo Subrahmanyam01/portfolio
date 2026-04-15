@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted } from 'vue'
 
-const roles = ['Software Engineer', 'Full-Stack Specialist', 'Curious Builder', 'Problem Solver']
+const roles = ['Software Engineer', 'Full-Stack Specialist', 'AI/ML Builder', 'Problem Solver']
 const currentRole = ref('')
 let roleIndex = 0
 let charIndex = 0
@@ -48,7 +48,9 @@ onMounted(() => {
     <!-- Main Content Container -->
     <div class="max-w-[1600px] mx-auto px-6 lg:px-24 z-10 reveal-on-scroll w-full">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
-        <div class="space-y-8 lg:space-y-10 mt-20 lg:mt-0 text-center lg:text-left flex flex-col items-center lg:items-start">
+        <div
+          class="space-y-8 lg:space-y-10 mt-20 lg:mt-0 text-center lg:text-left flex flex-col items-center lg:items-start"
+        >
           <div class="space-y-4">
             <h3
               class="text-white text-lg lg:text-2xl xl:text-3xl font-extralight tracking-widest opacity-60 uppercase"
@@ -63,7 +65,9 @@ onMounted(() => {
               <span class="breathing-color">Konakanchi</span>
             </h1>
 
-            <div class="flex items-center gap-4 lg:gap-6 h-12 w-full justify-center lg:justify-start">
+            <div
+              class="flex items-center gap-4 lg:gap-6 h-12 w-full justify-center lg:justify-start"
+            >
               <div class="hidden sm:block h-px w-12 lg:w-16 bg-neutral-800"></div>
               <span
                 class="text-lg lg:text-2xl font-mono text-neutral-400 uppercase tracking-[0.2em] lg:tracking-[0.3em]"
@@ -73,11 +77,13 @@ onMounted(() => {
             </div>
           </div>
 
-          <p class="text-gray-400 text-lg xl:text-xl max-w-lg xl:max-w-xl leading-relaxed font-light">
-            A <span class="text-white font-medium">curious builder</span> and Computer Science
-            graduate from the <span class="text-amber-500 italic">University of Florida</span>.
-            I specialize in bridging the gap between crisp interfaces and robust backend logic
-            to make life <span class="italic">meaningfully better</span>.
+          <p
+            class="text-gray-400 text-lg xl:text-xl max-w-lg xl:max-w-xl leading-relaxed font-light"
+          >
+            A <span class="text-white font-medium">curious builder</span> and Software Engineer 
+            from the <span class="text-amber-500 italic">University of Florida</span>. I
+            specialize in bridging the gap between crisp interfaces and robust backend logic to make
+            life <span class="italic">meaningfully better</span>.
           </p>
 
           <div class="flex flex-col sm:flex-row gap-6 sm:gap-8 pt-6 w-full sm:w-auto">
@@ -122,15 +128,13 @@ onMounted(() => {
               >
                 Human_Location
               </p>
-              <p class="text-sm font-bold text-white italic">Delray Beach, FL</p>
+              <p class="text-sm font-bold text-white italic">Nashville, TN</p>
             </div>
           </div>
         </div>
       </div>
     </div>
   </section>
-
-
 </template>
 
 <style scoped>

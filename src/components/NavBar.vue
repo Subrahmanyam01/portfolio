@@ -1,7 +1,16 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
-const navItems = ['Home', 'About', 'Education', 'Experience', 'Projects', 'Achievements', 'Skills', 'Contact']
+const navItems = [
+  'Home',
+  'About',
+  'Education',
+  'Experience',
+  'Projects',
+  'Achievements',
+  'Skills',
+  'Contact',
+]
 const activeSection = ref('home')
 
 let observer: IntersectionObserver | null = null
@@ -27,7 +36,9 @@ onBeforeUnmount(() => observer?.disconnect())
   <nav
     class="fixed top-0 left-0 w-full z-50 bg-black/60 backdrop-blur-xl border-b border-neutral-900"
   >
-    <div class="max-w-[1600px] mx-auto h-20 flex flex-row items-center justify-between px-6 lg:px-12 xl:px-24">
+    <div
+      class="max-w-[1600px] mx-auto h-20 flex flex-row items-center justify-between px-6 lg:px-12 xl:px-24"
+    >
       <div class="flex items-center gap-3 group cursor-pointer">
         <div
           class="w-8 h-8 bg-amber-500 rounded-sm flex items-center justify-center font-black text-black text-xs group-hover:rotate-90 transition-transform duration-500"
