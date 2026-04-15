@@ -1,222 +1,317 @@
 <script setup lang="ts">
-import { reactive, ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted } from 'vue'
 
-const containerRef = ref<HTMLElement | null>(null)
-const hubRef = ref<HTMLElement | null>(null)
-const nodeRefs = ref<(HTMLElement | null)[]>([])
-const hubCoords = reactive({ x: 0, y: 0 })
-const nodeCoords = reactive<Array<{ x: number; y: number }>>([])
+const mounted = ref(false)
+onMounted(() => setTimeout(() => { mounted.value = true }, 100))
 
-const nodes = [
+const categories = [
   {
-    title: 'Languages',
-    pos: 'top-0 left-0 lg:left-[5%]',
-    skills: ['Python', 'TypeScript', 'Go', 'Java', 'SQL'],
+    code: '01', label: 'Languages', color: 'cyan',
+    avgPct: 82,
+    skills: [
+      { name: 'Python',     pct: 95 },
+      { name: 'TypeScript', pct: 92 },
+      { name: 'SQL',        pct: 90 },
+      { name: 'Go',         pct: 78 },
+      { name: 'Java',       pct: 75 },
+      { name: 'Bash',       pct: 58 },
+    ],
   },
   {
-    title: 'Cloud_&_DevOps',
-    pos: 'top-0 right-0 lg:right-[5%]',
-    skills: ['AWS (ECS/Lambda)', 'Docker & K8s', 'Terraform', 'CI/CD', 'Linux'],
+    code: '02', label: 'Frontend', color: 'lime',
+    avgPct: 81,
+    skills: [
+      { name: 'React',    pct: 93 },
+      { name: 'Tailwind', pct: 90 },
+      { name: 'Angular',  pct: 78 },
+      { name: 'Vue.js',   pct: 76 },
+      { name: 'Next.js',  pct: 75 },
+      { name: 'Redux',    pct: 74 },
+    ],
   },
   {
-    title: 'Frontend',
-    pos: 'top-[32%] lg:top-1/2 lg:-translate-y-1/2 left-0 lg:-left-[5%]',
-    skills: ['React', 'Angular', 'Tailwind', 'Next.js', 'Redux'],
+    code: '03', label: 'Backend', color: 'violet',
+    avgPct: 83,
+    skills: [
+      { name: 'Django',    pct: 96 },
+      { name: 'FastAPI',   pct: 93 },
+      { name: 'REST APIs', pct: 92 },
+      { name: 'Node.js',   pct: 78 },
+      { name: 'gRPC',      pct: 76 },
+      { name: 'GraphQL',   pct: 75 },
+      { name: 'Celery',    pct: 72 },
+    ],
   },
   {
-    title: 'Backend_Systems',
-    pos: 'top-[32%] lg:top-1/2 lg:-translate-y-1/2 right-0 lg:-right-[5%]',
-    skills: ['Django', 'Node.js', 'FastAPI', 'gRPC', 'GraphQL'],
+    code: '04', label: 'Cloud & DevOps', color: 'sky',
+    avgPct: 83,
+    skills: [
+      { name: 'AWS ECS',    pct: 92 },
+      { name: 'Lambda',     pct: 90 },
+      { name: 'CI/CD',      pct: 90 },
+      { name: 'Docker',     pct: 78 },
+      { name: 'Kubernetes', pct: 76 },
+      { name: 'Terraform',  pct: 74 },
+      { name: 'Linux',      pct: 78 },
+    ],
   },
   {
-    title: 'Data_&_Distributed',
-    pos: 'bottom-0 left-0 lg:left-[5%]',
-    skills: ['Kafka', 'Redis', 'PostgreSQL', 'MongoDB', 'Elasticsearch'],
+    code: '05', label: 'Data & Streaming', color: 'amber',
+    avgPct: 74,
+    skills: [
+      { name: 'Redis',         pct: 92 },
+      { name: 'PostgreSQL',    pct: 91 },
+      { name: 'Kafka',         pct: 78 },
+      { name: 'MongoDB',       pct: 77 },
+      { name: 'Flink',         pct: 58 },
+      { name: 'Elasticsearch', pct: 56 },
+      { name: 'RabbitMQ',      pct: 55 },
+    ],
   },
   {
-    title: 'Tools_&_Methods',
-    pos: 'bottom-0 right-0 lg:right-[5%]',
-    skills: ['Prometheus', 'Grafana', 'Git', 'Agile', 'System Design'],
+    code: '06', label: 'Observability', color: 'orange',
+    avgPct: 81,
+    skills: [
+      { name: 'Git',           pct: 95 },
+      { name: 'Prometheus',    pct: 78 },
+      { name: 'Grafana',       pct: 77 },
+      { name: 'CloudWatch',    pct: 75 },
+      { name: 'System Design', pct: 78 },
+    ],
   },
 ]
 
-const isHTMLElement = (el: unknown): el is HTMLElement => {
-  return el instanceof HTMLElement
+const palette: Record<string, { r: number; g: number; b: number }> = {
+  cyan:   { r: 6,   g: 182, b: 212 },
+  lime:   { r: 132, g: 204, b: 22  },
+  violet: { r: 139, g: 92,  b: 246 },
+  sky:    { r: 14,  g: 165, b: 233 },
+  amber:  { r: 251, g: 191, b: 36  },
+  orange: { r: 251, g: 146, b: 60  },
+}
+const rgba = (color: string, a: number) => {
+  const p = palette[color]
+  return `rgba(${p.r},${p.g},${p.b},${a})`
+}
+const solid: Record<string, string> = {
+  cyan: '#22d3ee', lime: '#a3e635', violet: '#a78bfa',
+  sky: '#38bdf8', amber: '#fbbf24', orange: '#fb923c',
 }
 
-const updateCoords = () => {
-  if (!containerRef.value || !hubRef.value) return
-  const rootRect = containerRef.value.getBoundingClientRect()
+// SVG ring: circumference for r=28
+const R = 28
+const CIRC = 2 * Math.PI * R
 
-  // Update Hub Center
-  const hRect = hubRef.value.getBoundingClientRect()
-  hubCoords.x = hRect.left + hRect.width / 2 - rootRect.left
-  hubCoords.y = hRect.top + hRect.height / 2 - rootRect.top
+const ringOffset = (pct: number) => CIRC * (1 - pct / 100)
 
-  // Update Node Centers
-  nodeRefs.value.forEach((el, i) => {
-    if (el && isHTMLElement(el)) {
-      const nRect = el.getBoundingClientRect()
-      nodeCoords[i] = {
-        x: nRect.left + nRect.width / 2 - rootRect.left,
-        y: nRect.top + nRect.height / 2 - rootRect.top,
-      }
-    }
-  })
-}
+const levelLabel = (pct: number) =>
+  pct >= 88 ? 'Expert' : pct >= 72 ? 'Advanced' : 'Proficient'
 
-let observer: ResizeObserver | null = null
-onMounted(() => {
-  updateCoords()
-  observer = new ResizeObserver(updateCoords)
-  if (containerRef.value) {
-    observer.observe(containerRef.value)
-  }
-  window.addEventListener('scroll', updateCoords)
-})
-
-onBeforeUnmount(() => {
-  observer?.disconnect()
-  window.removeEventListener('scroll', updateCoords)
-})
+const hoveredCat = ref<string | null>(null)
 </script>
 
 <template>
-  <section id="skills" class="min-h-screen bg-black py-20 lg:py-32 relative overflow-hidden">
-    <div class="relative z-10 reveal-on-scroll">
-      <div
-        class="w-full max-w-[1440px] mx-auto min-h-screen bg-black text-white p-6 lg:px-16 relative"
-        ref="containerRef"
-      >
-        <svg class="hidden lg:block absolute inset-0 z-0 pointer-events-none w-full h-full">
-          <defs>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
-              <feMerge>
-                <feMergeNode in="coloredBlur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-            <radialGradient id="packetGlow">
-              <stop offset="0%" stop-color="#fbbf24" />
-              <stop offset="100%" stop-color="transparent" />
-            </radialGradient>
-          </defs>
+  <section id="skills" class="relative min-h-screen bg-black py-24 lg:py-32 overflow-hidden border-b border-neutral-900">
+    <!-- Ambient background -->
+    <div class="absolute inset-0 z-0 pointer-events-none">
+      <div class="absolute inset-0 bg-[linear-gradient(to_right,#80808006_1px,transparent_1px),linear-gradient(to_bottom,#80808006_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[50vw] rounded-full blur-[180px]" style="background:rgba(251,191,36,0.04)"></div>
+    </div>
 
-          <g v-for="(node, i) in nodes" :key="'link-' + i">
-            <line
-              :x1="hubCoords.x"
-              :y1="hubCoords.y"
-              :x2="nodeCoords[i]?.x"
-              :y2="nodeCoords[i]?.y"
-              stroke="#fbbf24"
-              stroke-width="1"
-              stroke-dasharray="4 8"
-              opacity="0.2"
-            />
-            <circle r="3" fill="url(#packetGlow)" filter="url(#glow)">
-              <animateMotion
-                :path="`M ${hubCoords.x},${hubCoords.y} L ${nodeCoords[i]?.x},${nodeCoords[i]?.y}`"
-                :dur="`${2 + Math.random() * 2}s`"
-                repeatCount="indefinite"
-              />
-            </circle>
-          </g>
-        </svg>
+    <div class="max-w-[1440px] mx-auto px-6 lg:px-16 relative z-10 reveal-on-scroll">
 
-        <div class="relative z-10 text-center mb-16 lg:mb-32">
-          <h2 class="text-xs uppercase tracking-[0.6em] text-amber-500 mb-4 font-bold">
-            Competencies
-          </h2>
-          <h1 class="text-4xl md:text-7xl font-black italic uppercase tracking-tighter">
-            Engineering <span class="text-neutral-800">Arsenal</span>
-          </h1>
-          <div class="w-16 h-1 bg-amber-500 mx-auto mt-6 rounded-full"></div>
-        </div>
-
-        <div class="relative flex flex-col items-center gap-6 lg:block w-full h-auto lg:h-[800px]">
-          <!-- Central Hub -->
-          <div
-            ref="hubRef"
-            class="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-30 w-48 h-48 rounded-full border border-amber-500/50 bg-black/80 backdrop-blur-md flex-col items-center justify-center p-4 shadow-[0_0_80px_rgba(251,191,36,0.1)] animate-pulse-slow"
-          >
-            <div
-              class="absolute inset-0 border border-amber-500/20 rounded-full animate-spin-slow"
-            ></div>
-            <h3 class="text-xl font-black text-center leading-none tracking-tight">
-              CORE<br /><span class="text-amber-500">GATEWAY</span>
-            </h3>
-            <p class="text-[8px] font-mono text-gray-500 mt-2 uppercase tracking-widest">
-              Stack Architecture
-            </p>
+      <!-- HUD Header -->
+      <div class="mb-14 relative">
+        <div class="flex items-center gap-4 mb-3">
+          <div class="flex gap-1.5">
+            <div class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse shadow-[0_0_6px_rgba(74,222,128,0.8)]"></div>
+            <div class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" style="animation-delay:0.3s"></div>
           </div>
+          <span class="text-[9px] font-mono text-amber-500/60 uppercase tracking-[0.5em]">JARVIS // SKILL_MATRIX_v2.0</span>
+        </div>
+        <h2 class="text-xs uppercase tracking-[0.6em] text-amber-500 mb-4 font-bold font-mono">Competencies</h2>
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+          <h1 class="text-5xl md:text-7xl xl:text-8xl font-black tracking-tighter italic text-white leading-none">
+            ENGINEERING<br /><span class="text-neutral-700">ARSENAL</span>
+          </h1>
+          <p class="text-gray-400 text-sm font-light max-w-xs lg:text-right leading-relaxed">
+            <span class="font-mono text-amber-500/80">ANALYSIS COMPLETE</span><br/>
+            38 modules · 6 domains · all systems nominal.
+          </p>
+        </div>
+        <div class="w-24 h-0.5 bg-gradient-to-r from-amber-500 to-transparent mt-8"></div>
+      </div>
 
-          <!-- Nodes -->
+      <!-- HUD Panel Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div
+          v-for="cat in categories"
+          :key="cat.code"
+          class="hud-panel group relative overflow-hidden rounded-xl cursor-default"
+          :style="{
+            borderColor: hoveredCat === cat.label ? rgba(cat.color, 0.5) : rgba(cat.color, 0.18),
+            background: `linear-gradient(135deg, rgba(0,0,0,0.95) 0%, ${rgba(cat.color, 0.04)} 100%)`,
+            boxShadow: hoveredCat === cat.label ? `0 0 40px ${rgba(cat.color, 0.15)}, inset 0 0 40px ${rgba(cat.color, 0.04)}` : 'none',
+          }"
+          @mouseenter="hoveredCat = cat.label"
+          @mouseleave="hoveredCat = null"
+        >
+          <!-- Corner brackets -->
+          <div class="corner-tl" :style="{ borderColor: solid[cat.color] }"></div>
+          <div class="corner-tr" :style="{ borderColor: solid[cat.color] }"></div>
+          <div class="corner-bl" :style="{ borderColor: solid[cat.color] }"></div>
+          <div class="corner-br" :style="{ borderColor: solid[cat.color] }"></div>
+
+          <!-- Radar sweep -->
           <div
-            v-for="(node, index) in nodes"
-            :key="index"
-            :ref="
-              (el) => {
-                if (isHTMLElement(el)) {
-                  nodeRefs[index] = el
-                }
-              }
-            "
-            :class="[
-              'w-full max-w-sm lg:absolute lg:w-72 bg-neutral-900/20 backdrop-blur-xl border border-neutral-800 p-6 rounded-xl hover:border-amber-500/40 hover:bg-neutral-900/60 transition-all duration-500 z-20 group',
-              node.pos,
-            ]"
-          >
-            <div class="flex items-center gap-3 mb-4 border-b border-neutral-800/50 pb-3">
-              <div
-                class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse group-hover:scale-150 transition-transform shadow-[0_0_10px_rgba(251,191,36,0.5)]"
-              ></div>
-              <h4 class="text-[10px] font-mono font-black uppercase text-amber-500 tracking-widest">
-                {{ node.title.replace('_', ' ') }}
-              </h4>
+            class="scan-sweep pointer-events-none"
+            :style="{ background: `linear-gradient(to bottom, transparent, ${rgba(cat.color, 0.06)}, transparent)` }"
+            :class="hoveredCat === cat.label ? 'scan-fast' : 'scan-slow'"
+          ></div>
+
+          <!-- Panel Content -->
+          <div class="relative z-10 p-6">
+
+            <!-- Panel Header -->
+            <div class="flex items-center gap-4 mb-5">
+              <!-- Circular ring -->
+              <div class="relative flex-shrink-0">
+                <svg :width="R*2+10" :height="R*2+10" class="transform -rotate-90">
+                  <!-- Track -->
+                  <circle
+                    :cx="R+5" :cy="R+5" :r="R"
+                    fill="none"
+                    :stroke="rgba(cat.color, 0.12)"
+                    stroke-width="3"
+                  />
+                  <!-- Progress -->
+                  <circle
+                    :cx="R+5" :cy="R+5" :r="R"
+                    fill="none"
+                    :stroke="solid[cat.color]"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    :stroke-dasharray="CIRC"
+                    :stroke-dashoffset="mounted ? ringOffset(cat.avgPct) : CIRC"
+                    style="transition: stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1)"
+                    :style="{ filter: `drop-shadow(0 0 4px ${solid[cat.color]})` }"
+                  />
+                </svg>
+                <!-- Center % -->
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <span class="text-[11px] font-mono font-black" :style="{ color: solid[cat.color] }">
+                    {{ cat.avgPct }}%
+                  </span>
+                </div>
+              </div>
+
+              <!-- Category name -->
+              <div class="flex-grow min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-[8px] font-mono uppercase tracking-[0.4em]" :style="{ color: rgba(cat.color, 0.6) }">
+                    {{ cat.code }} / MODULE
+                  </span>
+                </div>
+                <h3 class="text-base font-black uppercase tracking-tight leading-none" :style="{ color: solid[cat.color] }">
+                  {{ cat.label }}
+                </h3>
+                <p class="text-[8px] font-mono text-neutral-600 mt-1 uppercase tracking-widest">
+                  {{ cat.skills.length }} skills loaded
+                </p>
+              </div>
             </div>
-            <ul class="grid grid-cols-2 lg:grid-cols-1 gap-y-2 lg:gap-y-2">
-              <li
-                v-for="skill in node.skills"
-                :key="skill"
-                class="flex items-center justify-between text-xs text-neutral-400 group-hover:text-white transition-colors"
+
+            <!-- Divider -->
+            <div class="h-px mb-4" :style="{ background: `linear-gradient(to right, ${rgba(cat.color, 0.4)}, transparent)` }"></div>
+
+            <!-- Skills -->
+            <div class="space-y-2.5">
+              <div
+                v-for="skill in cat.skills"
+                :key="skill.name"
+                class="skill-row group/skill"
               >
-                <span>{{ skill }}</span>
-                <div
-                  class="hidden lg:block w-1 h-1 bg-neutral-800 rounded-full group-hover:bg-amber-500 transition-colors"
-                ></div>
-              </li>
-            </ul>
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-[10px] font-mono text-neutral-300 uppercase tracking-wider group-hover/skill:text-white transition-colors">
+                    {{ skill.name }}
+                  </span>
+                  <span class="text-[8px] font-mono tracking-widest" :style="{ color: rgba(cat.color, 0.7) }">
+                    {{ levelLabel(skill.pct) }}
+                  </span>
+                </div>
+                <!-- Bar track -->
+                <div class="h-1 rounded-full overflow-hidden" :style="{ background: rgba(cat.color, 0.1) }">
+                  <div
+                    class="h-full rounded-full transition-all duration-1000 ease-out"
+                    :style="{
+                      width: mounted ? skill.pct + '%' : '0%',
+                      background: `linear-gradient(to right, ${rgba(cat.color, 0.6)}, ${solid[cat.color]})`,
+                      boxShadow: `0 0 6px ${rgba(cat.color, 0.4)}`,
+                    }"
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom status line -->
+            <div class="mt-5 pt-3 flex items-center justify-between" :style="{ borderTop: `1px solid ${rgba(cat.color, 0.1)}` }">
+              <span class="text-[7px] font-mono uppercase tracking-[0.3em]" :style="{ color: rgba(cat.color, 0.35) }">
+                SYS_MODULE_ACTIVE
+              </span>
+              <div class="flex gap-1">
+                <div v-for="i in 3" :key="i" class="w-1 h-1 rounded-full" :style="{ background: rgba(cat.color, i === 1 ? 0.8 : 0.2) }"></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
     </div>
   </section>
 </template>
 
 <style scoped>
-@keyframes spin-slow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-.animate-spin-slow {
-  animation: spin-slow 20s linear infinite;
+/* Panel border */
+.hud-panel {
+  border: 1px solid;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
-@keyframes pulse-slow {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.8;
-  }
+/* Corner brackets */
+.corner-tl, .corner-tr, .corner-bl, .corner-br {
+  position: absolute;
+  width: 14px; height: 14px;
+  z-index: 20;
+  border-style: solid;
+  border-color: inherit;
+  transition: all 0.4s ease;
 }
-.animate-pulse-slow {
-  animation: pulse-slow 4s ease-in-out infinite;
+.corner-tl { top: -1px; left: -1px;  border-width: 2px 0 0 2px; }
+.corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+.corner-bl { bottom: -1px; left: -1px;  border-width: 0 0 2px 2px; }
+.corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+/* Group hover: expand brackets */
+.group:hover .corner-tl, .group:hover .corner-bl { width: 20px; height: 20px; }
+.group:hover .corner-tr, .group:hover .corner-br { width: 20px; height: 20px; }
+
+/* Radar sweep animation */
+.scan-sweep {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-size: 100% 40%;
+  background-repeat: no-repeat;
 }
+
+@keyframes sweep-slow {
+  0%   { background-position: 0 -40%; }
+  100% { background-position: 0 140%; }
+}
+@keyframes sweep-fast {
+  0%   { background-position: 0 -40%; }
+  100% { background-position: 0 140%; }
+}
+.scan-slow { animation: sweep-slow 4s linear infinite; }
+.scan-fast { animation: sweep-fast 1.8s linear infinite; }
 </style>

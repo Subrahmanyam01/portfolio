@@ -1,5 +1,26 @@
 <script setup lang="ts">
-const navItems = ['Home', 'About', 'Education', 'Experience', 'Projects', 'Skills']
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+
+const navItems = ['Home', 'About', 'Education', 'Experience', 'Projects', 'Achievements', 'Skills', 'Contact']
+const activeSection = ref('home')
+
+let observer: IntersectionObserver | null = null
+
+onMounted(() => {
+  observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          activeSection.value = entry.target.id
+        }
+      })
+    },
+    { threshold: 0.4 },
+  )
+  document.querySelectorAll('section[id]').forEach((el) => observer!.observe(el))
+})
+
+onBeforeUnmount(() => observer?.disconnect())
 </script>
 
 <template>
@@ -23,20 +44,27 @@ const navItems = ['Home', 'About', 'Education', 'Experience', 'Projects', 'Skill
         </div>
       </div>
 
-      <div class="flex flex-row items-center gap-6 lg:gap-10">
-        <a v-for="item in navItems" :key="item" :href="'#' + item.toLowerCase()" class="relative group cursor-pointer hidden lg:block">
+      <div class="flex flex-row items-center gap-5 lg:gap-8">
+        <a
+          v-for="item in navItems"
+          :key="item"
+          :href="'#' + item.toLowerCase()"
+          class="relative group cursor-pointer hidden lg:block"
+        >
           <span
-            class="text-[11px] lg:text-xs font-mono font-bold uppercase tracking-[0.2em] text-neutral-400 group-hover:text-amber-500 transition-colors duration-300"
+            class="text-[10px] font-mono font-bold uppercase tracking-[0.2em] transition-colors duration-300"
+            :class="
+              activeSection === item.toLowerCase()
+                ? 'text-amber-500'
+                : 'text-neutral-500 group-hover:text-amber-400'
+            "
           >
             {{ item }}
           </span>
-
+          <!-- Active underline -->
           <div
-            class="absolute -bottom-1 left-0 w-0 h-[2px] bg-amber-500 group-hover:w-full transition-all duration-500 ease-out"
-          ></div>
-
-          <div
-            class="absolute -top-4 left-1/2 -translate-x-1/2 w-1 h-1 bg-amber-500 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-pulse transition-opacity"
+            class="absolute -bottom-1 left-0 h-[1.5px] bg-amber-500 transition-all duration-400 ease-out"
+            :class="activeSection === item.toLowerCase() ? 'w-full' : 'w-0 group-hover:w-full'"
           ></div>
         </a>
 
